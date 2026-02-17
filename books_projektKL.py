@@ -9,9 +9,11 @@ config ={
 }
 try:
     conn = psycopg2.connect(**config)
+    cursor = conn.cursor()
     print("connected")
 except psycopg2.DatabaseError as error:
     print(error)
+    exit()
 
 def menu():
     control = input("""
@@ -31,24 +33,29 @@ def register():
     name = input("Add meg a teljes neved:")
     username = input("Add meg a felhasznalo neved:")
     email = input("Add meg az emailed:")
-    password = input("Add meg a jelszavad:")
+    user_password = input("Add meg a jelszavad:")
     birth_date = input("Szuletesi datum (YYYY-MM-DD): ")
     phonenumber = input("Telefonszam: ")
 
-    if len(password) < 8:
+    if len(user_password) < 8:
         print("A jelszo tul rovid")
-    if not phonenumber.isdigit():
-        print("A Telefonszam csak szamjegyekbol allhat!")
-    if "@" not in email or "." not in email:
-        print("Hibas email formatum")
-
-    cursor.execute(
-        "INSERT INTO felhasznalok (name, username, email, password, birth_date, phonenumber) "
-        "VALUES (%s, %s, %s, %s, %s, %s, %s)",
-        (name, username, email, password, birth_date, phonenumber, "users")
-    )
+        return
+    try:
+        sql = """
+                    INSERT INTO users (name, username, email, phonenumber, birth_date, user_password, user_role) 
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """
 
 
+        data = (name, username, email, phonenumber, birth_date, user_password, 'user')
+
+        cursor.execute(sql, data)
+        conn.commit()
+        print("Sikeres regisztracio!")
+
+    except Exception as e:
+        conn.rollback()
+        print(f"Hiba tortent: {e}")
 
 def login():
     username = input("Add meg a felhasznalo neved:")
@@ -57,3 +64,5 @@ def login():
 
 
 menu()
+cursor.close()
+conn.close()
