@@ -16,9 +16,15 @@ def menu():
         print("ilyen valasztas nem letezik")
 
 def register():
-    pass
+    name = input("Add meg a teljes neved:")
+    username = input("Add meg a felhasznalo neved:")
+    password = input("Add meg a jelszavad:")
+    birth_date = input("Szuletesi datum (YYYY-MM-DD): ")
+    phonenumber = input("Telefonszam: ")
 def login():
-    pass
+    username = input("Add meg a felhasznalo neved:")
+    password = input("Add meg a jelszavad:")
+
 
 
 menu()
