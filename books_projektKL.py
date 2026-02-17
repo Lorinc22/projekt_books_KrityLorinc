@@ -1,20 +1,24 @@
+import cursor
+import psycopg2
 
 config ={
-    'host': 'postgres',
+    'host': 'localhost',
     'database': 'postgres',
     'user': 'postgres',
     'password': 'postgres',
 }
+try:
+    conn = psycopg2.connect(**config)
+    print("connected")
+except psycopg2.DatabaseError as error:
+    print(error)
 
 def menu():
     control = input("""
 [1] Regisztracio
 [2] bejelentkezes
-        
+
 """)
-
-
-
 
     if control == '1':
         register()
@@ -37,6 +41,14 @@ def register():
         print("A Telefonszam csak szamjegyekbol allhat!")
     if "@" not in email or "." not in email:
         print("Hibas email formatum")
+
+    cursor.execute(
+        "INSERT INTO felhasznalok (name, username, email, password, birth_date, phonenumber) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+        (name, username, email, password, birth_date, phonenumber, "users")
+    )
+
+
 
 def login():
     username = input("Add meg a felhasznalo neved:")
