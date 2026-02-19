@@ -60,7 +60,24 @@ def register():
 def login():
     username = input("Add meg a felhasznalo neved:")
     password = input("Add meg a jelszavad:")
+    try:
+        sql=""" 
+            SELECT user_password FROM users WHERE username = %s
+        """
+        cursor.execute(sql, (username,))
+        result = cursor.fetchone()
+        if result is None:
+            print("Nincs ilyen felhasznalo")
+        else:
+            db_password = result[0]
+            if password == db_password:
+              print("Sikeres Bejelentzes!")
+            else:
+                print("Rossz jelszo")
 
+    except Exception as e:
+        conn.rollback()
+        print(f"Hiba tortent: {e}")
 
 
 menu()
