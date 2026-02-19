@@ -72,12 +72,106 @@ def login():
             db_password = result[0]
             if password == db_password:
               print("Sikeres Bejelentzes!")
+              user_menu()
             else:
                 print("Rossz jelszo")
 
     except Exception as e:
         conn.rollback()
         print(f"Hiba tortent: {e}")
+
+def user_menu():
+    control = input("""
+    [1] Konyvek keresese
+    [2] ................
+
+    """)
+
+    if control == '1':
+        usermenu2()
+    elif control == '2':
+        pass
+    else:
+        print("ilyen valasztas nem letezik")
+
+def usermenu2():
+    control = input("""
+    [1] Cim Szerint kereses
+    [2] Szero Szerint kereses
+    [3] KiadasiDatum Szerint kereses
+
+    """)
+
+    if control == '1':
+        find_by_title()
+    elif control == '2':
+        find_by_author()
+    elif control == '3':
+        find_by_date()
+    else:
+        print("ilyen valasztas nem letezik")
+
+def find_by_title():
+    option1 = input("Ird be a konyv cimet:")
+    try:
+        sql="""     
+        SELECT title, author, year FROM books WHERE title ILIKE %s
+        """
+        cursor.execute(sql,  (f"%{option1}%",))
+        result = cursor.fetchall()
+        if result is None:
+            print("Nincs ilyen konyv")
+        else:
+            print("Találatok:")
+            for row in result:
+                print(f"- {row[0]} ({row[1]}, {row[2]})")
+
+    except Exception as e:
+        conn.rollback()
+        print(f"Hiba tortent: {e}")
+
+
+
+def find_by_author():
+    option2 = input("Ird be a konyv szerzojet:")
+    try:
+        sql="""     
+        SELECT title, author, year FROM books WHERE author ILIKE %s
+        """
+        cursor.execute(sql,  (f"%{option2}%",))
+        result = cursor.fetchall()
+        if result is None:
+            print("Nincs ilyen szerzo")
+        else:
+            print("Találatok:")
+            for row in result:
+                print(f"- {row[0]} ({row[1]}, {row[2]})")
+
+    except Exception as e:
+        conn.rollback()
+        print(f"Hiba tortent: {e}")
+
+def find_by_date():
+    option3 = input("Ird be a konyv kiadasi datumat:")
+    try:
+        sql="""     
+        SELECT title, author, year FROM books WHERE year = %s
+        """
+        cursor.execute(sql, (int(option3),))
+        result = cursor.fetchall()
+        if result is None:
+            print("Nincs ilyen kiadasi datum")
+        else:
+            print("Találatok:")
+            for row in result:
+                print(f"- {row[0]} ({row[1]}, {row[2]})")
+
+    except Exception as e:
+        conn.rollback()
+        print(f"Hiba tortent: {e}")
+
+
+
 
 
 menu()
