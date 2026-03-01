@@ -119,7 +119,7 @@ def admin_menu():
     elif control == '2':
         remove_book()
     elif control == '3':
-        # change_books
+        change_book()
         return
     else:
         print("ilyen valasztas nem letezik")
@@ -128,14 +128,11 @@ def admin_menu():
 def user_menu():
     control = input("""
     [1] Konyvek keresese
-    [2] ................
 
     """)
 
     if control == '1':
         usermenu2()
-    elif control == '2':
-        pass
     else:
         print("ilyen valasztas nem letezik")
 
@@ -250,6 +247,44 @@ def remove_book():
     except Exception as e:
         conn.rollback()
         print(f"Hiba tortent: {e}")
+
+
+def change_book():
+    title = input("Cim: ")
+    author = input("Szerzo: ")
+    year = input("KiadasiDatum: ")
+
+    try:
+        cursor.execute("SELECT * FROM books WHERE title = %s AND author = %s AND year = %s",
+                       (title, author, int(year)))
+        result = cursor.fetchone()
+
+        if result is None:
+            print("Nincs ilyen Konyv az adatbazisban")
+            return
+
+        print("Talalt Konyv:", result)
+
+        new_title = input("Cim: ")
+        new_author = input("Szerzo: ")
+        new_year = input("KiadasiDatum: ")
+
+        if not new_title:
+            new_title = title
+        if not new_author:
+            new_author = author
+        if not new_year:
+            new_year = year
+
+        cursor.execute("""
+        UPDATE books SET title = %s, author = %s, year = %s WHERE title = %s AND author = %s AND year = %s
+        """, (new_title, new_author, int(new_year), title, author, int(year)))
+        conn.commit()
+        print("Sikeres Modositas")
+
+    except Exception as e:
+        conn.rollback()
+        print(f"Hiba történt: {e}")
 
 
 menu()
