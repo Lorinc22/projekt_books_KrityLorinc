@@ -99,8 +99,7 @@ def admin_menu():
     if control == '1':
         add_book()
     elif control == '2':
-        return
-        # remove_books()
+        remove_book()
     elif control == '3':
         # change_books
         return
@@ -214,6 +213,22 @@ def add_book():
         cursor.execute(sql, (title, author, year))
         conn.commit()
         print("Sikeres Hozzadasa!")
+    except Exception as e:
+        conn.rollback()
+        print(f"Hiba tortent: {e}")
+
+
+def remove_book():
+    title = input("Cim: ")
+    author = input("Szerzo: ")
+    year = input("KiadasiDatum: ")
+    try:
+        sql = """
+        DELETE FROM books WHERE title = %s AND author = %s AND year = %s
+        """
+        cursor.execute(sql, (title, author, int(year)))
+        conn.commit()
+        print("Sikeres Torles")
     except Exception as e:
         conn.rollback()
         print(f"Hiba tortent: {e}")
