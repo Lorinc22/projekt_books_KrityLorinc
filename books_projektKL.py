@@ -1,7 +1,7 @@
 import cursor
 import psycopg2
 
-config ={
+config = {
     'host': 'localhost',
     'database': 'postgres',
     'user': 'postgres',
@@ -14,6 +14,7 @@ try:
 except psycopg2.DatabaseError as error:
     print(error)
     exit()
+
 
 def menu():
     control = input("""
@@ -28,6 +29,7 @@ def menu():
         login()
     else:
         print("ilyen valasztas nem letezik")
+
 
 def register():
     name = input("Add meg a teljes neved:")
@@ -46,7 +48,6 @@ def register():
                     VALUES (%s, %s, %s, %s, %s, %s, %s)
                 """
 
-
         data = (name, username, email, phonenumber, birth_date, user_password, 'user')
 
         cursor.execute(sql, data)
@@ -57,11 +58,12 @@ def register():
         conn.rollback()
         print(f"Hiba tortent: {e}")
 
+
 def login():
     username = input("Add meg a felhasznalo neved:")
     password = input("Add meg a jelszavad:")
     try:
-        sql=""" 
+        sql = """ 
             SELECT user_password, user_role FROM users WHERE username = %s
         """
         cursor.execute(sql, (username,))
@@ -86,6 +88,7 @@ def login():
         conn.rollback()
         print(f"Hiba tortent: {e}")
 
+
 def admin_menu():
     control = input("""
         [1] Konyvek hozzadasa
@@ -94,13 +97,12 @@ def admin_menu():
 
         """)
     if control == '1':
-        return
-        #add_books()
+        add_book()
     elif control == '2':
         return
-        #remove_books()
+        # remove_books()
     elif control == '3':
-        #change_books
+        # change_books
         return
     else:
         print("ilyen valasztas nem letezik")
@@ -120,6 +122,7 @@ def user_menu():
     else:
         print("ilyen valasztas nem letezik")
 
+
 def usermenu2():
     control = input("""
     [1] Cim Szerint kereses
@@ -137,13 +140,14 @@ def usermenu2():
     else:
         print("ilyen valasztas nem letezik")
 
+
 def find_by_title():
     option1 = input("Ird be a konyv cimet:")
     try:
-        sql="""     
+        sql = """     
         SELECT title, author, year FROM books WHERE title ILIKE %s
         """
-        cursor.execute(sql,  (f"%{option1}%",))
+        cursor.execute(sql, (f"%{option1}%",))
         result = cursor.fetchall()
         if result is None:
             print("Nincs ilyen konyv")
@@ -157,14 +161,13 @@ def find_by_title():
         print(f"Hiba tortent: {e}")
 
 
-
 def find_by_author():
     option2 = input("Ird be a konyv szerzojet:")
     try:
-        sql="""     
+        sql = """     
         SELECT title, author, year FROM books WHERE author ILIKE %s
         """
-        cursor.execute(sql,  (f"%{option2}%",))
+        cursor.execute(sql, (f"%{option2}%",))
         result = cursor.fetchall()
         if result is None:
             print("Nincs ilyen szerzo")
@@ -177,10 +180,11 @@ def find_by_author():
         conn.rollback()
         print(f"Hiba tortent: {e}")
 
+
 def find_by_date():
     option3 = input("Ird be a konyv kiadasi datumat:")
     try:
-        sql="""     
+        sql = """     
         SELECT title, author, year FROM books WHERE year = %s
         """
         cursor.execute(sql, (int(option3),))
@@ -197,7 +201,22 @@ def find_by_date():
         print(f"Hiba tortent: {e}")
 
 
+def add_book():
+    title = input("Cim: ")
+    author = input("Szerzo: ")
+    year = input("KiadasiDatum: ")
 
+    try:
+        sql = """
+        INSERT INTO books (title, author, year) VALUES (%s, %s, %s)
+        """
+
+        cursor.execute(sql, (title, author, year))
+        conn.commit()
+        print("Sikeres Hozzadasa!")
+    except Exception as e:
+        conn.rollback()
+        print(f"Hiba tortent: {e}")
 
 
 menu()
