@@ -62,7 +62,7 @@ def login():
     password = input("Add meg a jelszavad:")
     try:
         sql=""" 
-            SELECT user_password FROM users WHERE username = %s
+            SELECT user_password, user_role FROM users WHERE username = %s
         """
         cursor.execute(sql, (username,))
         result = cursor.fetchone()
@@ -70,15 +70,41 @@ def login():
             print("Nincs ilyen felhasznalo")
         else:
             db_password = result[0]
+            user_role = result[1]
+
             if password == db_password:
-              print("Sikeres Bejelentzes!")
-              user_menu()
+                print("Sikeres Bejelentkezes!")
+
+                if user_role == 'admin':
+                    admin_menu()
+                else:
+                    user_menu()
             else:
                 print("Rossz jelszo")
 
     except Exception as e:
         conn.rollback()
         print(f"Hiba tortent: {e}")
+
+def admin_menu():
+    control = input("""
+        [1] Konyvek hozzadasa
+        [2] Konyvek Torlese
+        [3] Konyvek Szerkesztese
+
+        """)
+    if control == '1':
+        return
+        #add_books()
+    elif control == '2':
+        return
+        #remove_books()
+    elif control == '3':
+        #change_books
+        return
+    else:
+        print("ilyen valasztas nem letezik")
+
 
 def user_menu():
     control = input("""
