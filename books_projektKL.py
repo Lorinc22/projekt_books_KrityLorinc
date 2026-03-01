@@ -1,3 +1,5 @@
+import re
+
 import cursor
 import psycopg2
 
@@ -41,6 +43,22 @@ def register():
 
     if len(user_password) < 8:
         print("A jelszo tul rovid")
+        return
+
+    if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
+        print("Hibas Email formatum")
+        return
+
+    if not phonenumber.isdigit():
+        print("Hibas Telefonszam")
+        return
+
+    if len(name.strip()) < 2:
+        print("Hibas Nev")
+        return
+
+    if len(username.strip()) < 3:
+        print("Hibas Felhasznalonev")
         return
     try:
         sql = """
