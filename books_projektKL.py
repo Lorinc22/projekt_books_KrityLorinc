@@ -20,8 +20,8 @@ except psycopg2.DatabaseError as error:
 
 def menu():
     control = input("""
-[1] Regisztracio
-[2] bejelentkezes
+[1] Regisztrácio
+[2] Bejelentkezés
 
 """)
 
@@ -30,35 +30,35 @@ def menu():
     elif control == '2':
         login()
     else:
-        print("ilyen valasztas nem letezik")
+        print("ilyen választas nem létezik")
 
 
 def register():
     name = input("Add meg a teljes neved:")
-    username = input("Add meg a felhasznalo neved:")
+    username = input("Add meg a felhasználo neved:")
     email = input("Add meg az emailed:")
     user_password = input("Add meg a jelszavad:")
-    birth_date = input("Szuletesi datum (YYYY-MM-DD): ")
-    phonenumber = input("Telefonszam: ")
+    birth_date = input("Születési dátum (YYYY-MM-DD): ")
+    phonenumber = input("Telefonszám: ")
 
     if len(user_password) < 8:
-        print("A jelszo tul rovid")
+        print("A jelszó rövid")
         return
 
     if not re.match(r"[^@]+@[^@]+\.[^@]+", email):
-        print("Hibas Email formatum")
+        print("Hibás Email formátum")
         return
 
     if not phonenumber.isdigit():
-        print("Hibas Telefonszam")
+        print("Hibás Telefonszám")
         return
 
     if len(name.strip()) < 2:
-        print("Hibas Nev")
+        print("Hibás Név")
         return
 
     if len(username.strip()) < 3:
-        print("Hibas Felhasznalonev")
+        print("Hibás Felhasználónév")
         return
     try:
         sql = """
@@ -70,15 +70,15 @@ def register():
 
         cursor.execute(sql, data)
         conn.commit()
-        print("Sikeres regisztracio!")
+        print("Sikeres regisztrácio!")
 
     except Exception as e:
         conn.rollback()
-        print(f"Hiba tortent: {e}")
+        print(f"Hiba történt: {e}")
 
 
 def login():
-    username = input("Add meg a felhasznalo neved:")
+    username = input("Add meg a felhasználó neved:")
     password = input("Add meg a jelszavad:")
     try:
         sql = """ 
@@ -87,31 +87,31 @@ def login():
         cursor.execute(sql, (username,))
         result = cursor.fetchone()
         if result is None:
-            print("Nincs ilyen felhasznalo")
+            print("Nincs ilyen felhasználó")
         else:
             db_password = result[0]
             user_role = result[1]
 
             if password == db_password:
-                print("Sikeres Bejelentkezes!")
+                print("Sikeres Bejelentkezés!")
 
                 if user_role == 'admin':
                     admin_menu()
                 else:
                     user_menu()
             else:
-                print("Rossz jelszo")
+                print("Rossz jelszó")
 
     except Exception as e:
         conn.rollback()
-        print(f"Hiba tortent: {e}")
+        print(f"Hiba történt: {e}")
 
 
 def admin_menu():
     control = input("""
-        [1] Konyvek hozzadasa
-        [2] Konyvek Torlese
-        [3] Konyvek Szerkesztese
+        [1] Könyvek hozzáadása
+        [2] Könyvek Törlése
+        [3] Könyvek Szerkesztése
 
         """)
     if control == '1':
@@ -122,26 +122,26 @@ def admin_menu():
         change_book()
         return
     else:
-        print("ilyen valasztas nem letezik")
+        print("ilyen választás nem létezik")
 
 
 def user_menu():
     control = input("""
-    [1] Konyvek keresese
+    [1] Könyvek keresése
 
     """)
 
     if control == '1':
         usermenu2()
     else:
-        print("ilyen valasztas nem letezik")
+        print("ilyen választás nem létezik")
 
 
 def usermenu2():
     control = input("""
-    [1] Cim Szerint kereses
-    [2] Szero Szerint kereses
-    [3] KiadasiDatum Szerint kereses
+    [1] Cím szerint keresés
+    [2] Szerző szerint keresés
+    [3] Kiadási dátum szerint keresés
 
     """)
 
@@ -152,11 +152,11 @@ def usermenu2():
     elif control == '3':
         find_by_date()
     else:
-        print("ilyen valasztas nem letezik")
+        print("Ilyen választás nem létezik")
 
 
 def find_by_title():
-    option1 = input("Ird be a konyv cimet:")
+    option1 = input("Írd be a könyv címét: ")
     try:
         sql = """     
         SELECT title, author, year FROM books WHERE title ILIKE %s
@@ -164,7 +164,7 @@ def find_by_title():
         cursor.execute(sql, (f"%{option1}%",))
         result = cursor.fetchall()
         if result is None:
-            print("Nincs ilyen konyv")
+            print("Nincs ilyen könyv")
         else:
             print("Találatok:")
             for row in result:
@@ -172,11 +172,11 @@ def find_by_title():
 
     except Exception as e:
         conn.rollback()
-        print(f"Hiba tortent: {e}")
+        print(f"Hiba történt: {e}")
 
 
 def find_by_author():
-    option2 = input("Ird be a konyv szerzojet:")
+    option2 = input("Írd be a könyv szerzőjét: ")
     try:
         sql = """     
         SELECT title, author, year FROM books WHERE author ILIKE %s
@@ -184,7 +184,7 @@ def find_by_author():
         cursor.execute(sql, (f"%{option2}%",))
         result = cursor.fetchall()
         if result is None:
-            print("Nincs ilyen szerzo")
+            print("Nincs ilyen szerző")
         else:
             print("Találatok:")
             for row in result:
@@ -192,11 +192,11 @@ def find_by_author():
 
     except Exception as e:
         conn.rollback()
-        print(f"Hiba tortent: {e}")
+        print(f"Hiba történt: {e}")
 
 
 def find_by_date():
-    option3 = input("Ird be a konyv kiadasi datumat:")
+    option3 = input("Írd be a könyv kiadási dátumát: ")
     try:
         sql = """     
         SELECT title, author, year FROM books WHERE year = %s
@@ -204,7 +204,7 @@ def find_by_date():
         cursor.execute(sql, (int(option3),))
         result = cursor.fetchall()
         if result is None:
-            print("Nincs ilyen kiadasi datum")
+            print("Nincs ilyen kiadási dátum")
         else:
             print("Találatok:")
             for row in result:
@@ -212,47 +212,46 @@ def find_by_date():
 
     except Exception as e:
         conn.rollback()
-        print(f"Hiba tortent: {e}")
+        print(f"Hiba történt: {e}")
 
 
 def add_book():
-    title = input("Cim: ")
-    author = input("Szerzo: ")
-    year = input("KiadasiDatum: ")
+    title = input("Cím: ")
+    author = input("Szerző: ")
+    year = input("Kiadási dátum: ")
 
     try:
         sql = """
         INSERT INTO books (title, author, year) VALUES (%s, %s, %s)
         """
-
         cursor.execute(sql, (title, author, year))
         conn.commit()
-        print("Sikeres Hozzadasa!")
+        print("Sikeres hozzáadás!")
     except Exception as e:
         conn.rollback()
-        print(f"Hiba tortent: {e}")
+        print(f"Hiba történt: {e}")
 
 
 def remove_book():
-    title = input("Cim: ")
-    author = input("Szerzo: ")
-    year = input("KiadasiDatum: ")
+    title = input("Cím: ")
+    author = input("Szerző: ")
+    year = input("Kiadási dátum: ")
     try:
         sql = """
         DELETE FROM books WHERE title = %s AND author = %s AND year = %s
         """
         cursor.execute(sql, (title, author, int(year)))
         conn.commit()
-        print("Sikeres Torles")
+        print("Sikeres törlés")
     except Exception as e:
         conn.rollback()
-        print(f"Hiba tortent: {e}")
+        print(f"Hiba történt: {e}")
 
 
 def change_book():
-    title = input("Cim: ")
-    author = input("Szerzo: ")
-    year = input("KiadasiDatum: ")
+    title = input("Cím: ")
+    author = input("Szerző: ")
+    year = input("Kiadási dátum: ")
 
     try:
         cursor.execute("SELECT * FROM books WHERE title = %s AND author = %s AND year = %s",
@@ -260,14 +259,14 @@ def change_book():
         result = cursor.fetchone()
 
         if result is None:
-            print("Nincs ilyen Konyv az adatbazisban")
+            print("Nincs ilyen könyv az adatbázisban")
             return
 
-        print("Talalt Konyv:", result)
+        print("Talált könyv:", result)
 
-        new_title = input("Cim: ")
-        new_author = input("Szerzo: ")
-        new_year = input("KiadasiDatum: ")
+        new_title = input("Új cím: ")
+        new_author = input("Új szerző: ")
+        new_year = input("Új kiadási dátum: ")
 
         if not new_title:
             new_title = title
@@ -280,7 +279,7 @@ def change_book():
         UPDATE books SET title = %s, author = %s, year = %s WHERE title = %s AND author = %s AND year = %s
         """, (new_title, new_author, int(new_year), title, author, int(year)))
         conn.commit()
-        print("Sikeres Modositas")
+        print("Sikeres módosítás")
 
     except Exception as e:
         conn.rollback()
