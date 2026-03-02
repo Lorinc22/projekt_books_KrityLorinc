@@ -3,6 +3,8 @@ import re
 import cursor
 import psycopg2
 
+from save_to_txt import save_to_txt
+
 config = {
     'host': 'localhost',
     'database': 'postgres',
@@ -171,12 +173,16 @@ def find_by_title():
         """
         cursor.execute(sql, (f"%{option1}%",))
         result = cursor.fetchall()
-        if result is None:
-            print("Nincs ilyen könyv")
-        else:
+        if result:
             print("Találatok:")
             for row in result:
                 print(f"- {row[0]} ({row[1]}, {row[2]})")
+
+            save_option = input("Szeretnéd menteni az eredményt? (i/n):")
+            if save_option == 'i':
+                save_to_txt(result)
+        else:
+            print("Nincs találat")
 
     except Exception as e:
         conn.rollback()
