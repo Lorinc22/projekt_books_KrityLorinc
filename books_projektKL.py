@@ -112,6 +112,7 @@ def admin_menu():
         [1] Könyvek hozzáadása
         [2] Könyvek Törlése
         [3] Könyvek Szerkesztése
+        [4] Kilépés
 
         """)
     if control == '1':
@@ -120,7 +121,8 @@ def admin_menu():
         remove_book()
     elif control == '3':
         change_book()
-        return
+    elif control == '4':
+        print("Kilépés.........")
     else:
         print("ilyen választás nem létezik")
 
@@ -128,11 +130,14 @@ def admin_menu():
 def user_menu():
     control = input("""
     [1] Könyvek keresése
+    [2] Kilépés
 
     """)
 
     if control == '1':
         usermenu2()
+    elif control == '2':
+        print("Kilépés.........")
     else:
         print("ilyen választás nem létezik")
 
@@ -142,6 +147,7 @@ def usermenu2():
     [1] Cím szerint keresés
     [2] Szerző szerint keresés
     [3] Kiadási dátum szerint keresés
+    [4] Vissza
 
     """)
 
@@ -151,6 +157,8 @@ def usermenu2():
         find_by_author()
     elif control == '3':
         find_by_date()
+    elif control == '4':
+        user_menu()
     else:
         print("Ilyen választás nem létezik")
 
